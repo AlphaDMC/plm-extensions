@@ -6,10 +6,10 @@
 // The value of variable redirectUri must match your APS app's callback URL EXACTLY. If you encounter the error "400 - Invalid redirect_uri" when starting apps, please review this link for typos and any other differences.
 // The 'defaultThene' setting can be overwritten with each request if needed. Simply add the parameter 'theme' to your request (ie &theme=dark or &theme=light)
 // With 'enableCache' you can let the server cache defined data which does not change frequently (workspace configuration for example). This will improve performance of some interactions. However, the cache can only be cleared by restarting the server.
-let clientId        = '';
-let redirectUri     = 'http://localhost:8080/callback';
-let tenant          = '';
-let defaultTheme    = 'dark';   // Set the standard theme to dark or light
+let clientId        = '4Q2LXekPOjaOKKaafGju6LSznzlhmY9YZczWyYLygGz7QEB8';
+let redirectUri     = 'https://plm-extensions-164478011399.us-east1.run.app/callback';
+let tenant          = 'blox';
+let defaultTheme    = 'light';   // Set the standard theme to dark or light
 let enableCache     = false;    
 
 
@@ -23,8 +23,8 @@ let enableCache     = false;
 // However, as this impacts security, its is recommended to provide the following settings only if these advanced admin utilities will be used, maybe even only temporarily or in a local copy of this server.
 // All other applications will work even if the following 2 settings are not provided as they use the clientId variable instead. 
 // Note that you can also provide these settings using the given environment variables ADMIN_CLIENT_ID and ADMIN_CLIENT_SECRET.
-let adminClientId     = '';
-let adminClientSecret = '';
+let adminClientId     = 'egOUtmpMIUGFlQVrB1QcGAGYVXi1UUUIwb5yYbVy7jjGk1AH';
+let adminClientSecret = '4nsSWFqVNgB5TcfJVL9HvCW64k2af4UzOr7NAw9Kq3KZggrGAcRSY1FX6bPEevM4';
 
 
 
