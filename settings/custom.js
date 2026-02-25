@@ -592,7 +592,7 @@ exports.applications = {
             bomColumnCode    : true,
             bomColumnMakeBuy : true,
             tabDisassemble   : true,
-            tabOperations    : true,
+            tabOperations    : false,
             excelExport      : true
         },
         viewerFeatures : {

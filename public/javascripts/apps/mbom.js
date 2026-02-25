@@ -212,16 +212,16 @@ function setUIEvents() {
         $(this).addClass('selected');
         $(this).siblings().removeClass('selected');
     });
-    $('#mode-add').click(function() { 
+    $('#mode-add').click(function() {
         $('body').removeClass('mode-disassemble').removeClass('mode-ebom').addClass('mode-add').removeClass('mode-operations');
-        setTimeout(function() { viewer.resize(); }, 250); 
+        setTimeout(function() { if(typeof viewer !== 'undefined') viewer.resize(); }, 250);
         disassembleMode = false;
         $(this).addClass('selected');
         $(this).siblings().removeClass('selected');
     });
-    $('#mode-operations').click(function() { 
+    $('#mode-operations').click(function() {
         $('body').removeClass('mode-disassemble').removeClass('mode-ebom').removeClass('mode-add').addClass('mode-operations');
-        setTimeout(function() { viewer.resize(); }, 250); 
+        setTimeout(function() { if(typeof viewer !== 'undefined') viewer.resize(); }, 250);
         disassembleMode = false;
         $(this).addClass('selected');
         $(this).siblings().removeClass('selected');
