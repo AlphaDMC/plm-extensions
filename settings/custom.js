@@ -529,39 +529,72 @@ exports.applications = {
     },
 
     mbom : {
-        wsIdEBOM                      : '57',
-        wsIdMBOM                      : '57',
-        bomViewNameEBOM               : 'MBOM Transition',
-        bomViewNameMBOM               : 'MBOM Transition',
-        fieldIdEBOM                   : 'EBOM',
-        fieldIdMBOM                   : 'MBOM',
-        fieldIdNumber                 : 'NUMBER',
-        fieldIdTitle                  : 'TITLE',
-        fieldIdCategory               : 'PDM_CATEGORY',
-        fieldIdProcessCode            : 'PROCESS_CODE',
-        fieldIdEndItem                : 'END_ITEM',
-        fieldIdMatchesMBOM            : 'MATCHES_MBOM',
-        fieldIdIgnoreInMBOM           : 'IGNORE_IN_MBOM',
-        fieldIdIsProcess              : 'IS_PROCESS',
-        fieldIdLastSync               : 'LAST_MBOM_SYNC',
-        fieldIdLastUser               : 'LAST_MBOM_USER',
-        fieldIdEBOMItem               : 'IS_EBOM_ITEM',
-        fieldIdEBOMRootItem           : 'EBOM_ROOT_ITEM',
-        fieldsToCopy                  : ['TITLE', 'DESCRIPTION'],
-        fieldIdInstructions           : 'INSTRUCTIONS',
-        fieldIdMarkupSVG              : 'MARKUP_SVG',
-        fieldIdMarkupState            : 'MARKUP_STATE',
-        revisionBias                  : 'working',
-        pinMBOMItems                  : false,
-        suffixItemNumber              : '-M',
-        incrementOperatonsItemNumber  : true,
-        newDefaults                   : [],
-        searches : [
+        workspaceEBOM : {
+            workspaceId : null, // null = uses common.workspaceIds.items (57)
+            bomView     : 'MBOM Transition',
+            depth       : 10,
+            fieldIDs    : {
+                mbom         : 'MBOM',
+                makeOrBuy    : 'MAKE_OR_BUY',
+                number       : 'NUMBER',
+                type         : 'TYPE',
+                category     : 'PDM_CATEGORY',
+                code         : 'PROCESS_CODE',
+                endItem      : 'END_ITEM',
+                matchesMBOM  : 'MATCHES_MBOM',
+                ignoreInMBOM : 'IGNORE_IN_MBOM',
+                lastMBOMSync : 'LAST_MBOM_SYNC',
+                lastMBOMUser : 'LAST_MBOM_USER'
+            }
+        },
+        workspaceMBOM : {
+            workspaceId : null, // null = uses common.workspaceIds.items (57)
+            bomView     : 'MBOM Transition',
+            depth       : 10,
+            fieldIDs    : {
+                ebom         : 'EBOM',
+                number       : 'NUMBER',
+                title        : 'TITLE',
+                isProcess    : 'IS_PROCESS',
+                type         : 'TYPE',
+                category     : 'PDM_CATEGORY',
+                code         : 'PROCESS_CODE',
+                ebomRoot     : 'EBOM_ROOT_ITEM',
+                lastMBOMSync : 'LAST_MBOM_SYNC',
+                lastMBOMUser : 'LAST_MBOM_USER',
+            },
+            bomFieldIDs : {
+                makeOrBuy  : 'BOM_MAKE_OR_BUY',
+                isEBOMItem : 'IS_EBOM_ITEM',
+            }
+        },
+        mbomRoot : {
+            fieldsToCopy : [
+                { ebom : 'TITLE'      , mbom : 'TITLE'       },
+                { ebom : 'DESCRIPTION', mbom : 'DESCRIPTION' }
+            ],
+        },
+        newProcessDefaults           : [],
+        matchNewProcessNumber        : true,
+        switchEBOMRevision           : 'working',
+        picklistIDMakeOrBuy          : 'CUSTOM_LOOKUP_ITEM_MAKE_OR_BUY',
+        labelInsertNode              : 'Add Process',
+        pinEBOMItemsInMBOM           : false,
+        suffixMBOMNumber             : '-M',
+        predefinedSearchesInAddItems : [
             { title : 'Purchased Parts', query : 'ITEM_DETAILS:MAKE_OR_BUY%3DBuy' },
             { title : 'Packaging Parts', query : 'ITEM_DETAILS:TYPE%3DPackaging'  },
             { title : 'Processes'      , query : 'ITEM_DETAILS:TYPE%3DProcess'    }
         ],
-        sectionInCreateForm : ['Basic', 'Technical Details'],
+        sectionsInCreateForm : ['Basic', 'Technical Details'],
+        displayOptions : {
+            bomColumnNumber  : true,
+            bomColumnCode    : true,
+            bomColumnMakeBuy : true,
+            tabDisassemble   : true,
+            tabOperations    : true,
+            excelExport      : true
+        },
         viewerFeatures : {
             contextMenu   : false,
             cube          : false,
