@@ -1152,7 +1152,7 @@ exports.menu = [
             icon     : 'icon-rules',
             title    : 'Workspace Comparison',
             subtitle : 'Deploy changes securely with automated comparison',
-            url      : '/workspace-comparison'
+            url      : '/comparison'
         },{
             icon     : 'icon-bar-chart-stack',
             title    : 'Tenant Insights',
@@ -1187,7 +1187,53 @@ exports.menu = [
 // ---------------------------------------------------------------------------------------------------------------------------
 exports.server = {
     landingPage     : '',
-    servicesEnabled : {}
+    servicesEnabled : {
+
+        // End User Applications
+        abom           : true,
+        classes        : true,
+        client         : true,
+        dashboard      : true,
+        explorer       : true,
+        impactanalysis : true,
+        instances      : true,
+        mbom           : true,
+        navigator      : true,
+        portal         : true,
+        portfolio      : true,
+        projects       : true,
+        reports        : true,
+        reviews        : true,
+        sbom           : true,
+        service        : true,
+        variants       : true,
+
+        // Administration Utilities
+        comparison           : true,
+        data                 : true,
+        insights             : true,
+        'outstanding-work'   : true,
+        shortcuts            : true,
+        users                : true,
+
+        // Addins
+        context      : true,
+        item         : true,
+        login        : true,
+        'pdm-search' : true,
+        tasks        : true,
+
+        // Framework Services
+        docs               : true,
+        landing            : true,
+        troubleshooting    : true,
+        start              : true,
+        gallery            : true,
+        template           : true,
+        playground         : true,
+        'chrome-extension' : true,
+
+    }
 }
 
 
