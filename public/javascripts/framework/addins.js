@@ -47,6 +47,12 @@ function setAddinEvents() {
 
                 switch(action) {
 
+                    case 'plm-item': 
+                        console.log(' message = ' + arg.data);
+                        // let elemFocus = $('.addin-focus-element');
+                        // if(elemFocus.length === 1) elemFocus.focus();
+                        break;
+
                     case 'response': 
                         let messageTitle = response[1];
                         console.log(' messageTitle = ' + messageTitle);
@@ -103,6 +109,7 @@ function genAddinTilesActions(elemContent) {
 function genAddinTileActions(elemTile) {
 
     let elemActions = $('<div></div>').appendTo(elemTile).addClass('tile-actions');
+    let isDrawing   = elemTile.hasClass('drawing');
 
     switch(elemTile.attr('data-type')) {
 
@@ -120,12 +127,12 @@ function genAddinTileActions(elemTile) {
                 // genAddinTileAction(elemActions, 'gotoVaultFile', 'icon-goto-folder', 'Go To Folder'); 
                 // genAddinTileAction(elemActions, 'gotoVaultItem', 'icon-vault-item' , 'Go To Item'); 
                 genAddinTileAction(elemActions, 'openComponent', 'icon-folder-open', 'Open Component'); 
-                genAddinTileAction(elemActions, 'addComponent' , 'icon-product'    , 'Place Component'); 
+                if(!isDrawing) genAddinTileAction(elemActions, 'addComponent', 'icon-product', 'Place Component'); 
             } else {
                 genAddinTileAction(elemActions, 'gotoVaultFile', 'icon-goto-folder', 'Go To Folder'); 
                 genAddinTileAction(elemActions, 'gotoVaultItem', 'icon-vault-item' , 'Go To Item'); 
                 genAddinTileAction(elemActions, 'openComponent', 'icon-folder-open', 'Open in CAD'); 
-                genAddinTileAction(elemActions, 'addComponent' , 'icon-product'    , 'Insert into CAD'); 
+                if(!isDrawing) genAddinTileAction(elemActions, 'addComponent', 'icon-product', 'Insert into CAD'); 
             }
             break;
 

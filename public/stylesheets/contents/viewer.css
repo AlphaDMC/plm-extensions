@@ -1,14 +1,17 @@
 /*  VIEWER */
 /* ----------------------------------------------------------------------------- */
 .viewer-processing-message {
-    position   : absolute;
-    top        : calc(50% + 30px);
-    left       : calc(50% - 100px);
-    text-align : center;
-    max-width  : 200px;
-    min-width  : 200px;
-    width      : 200px;
-    z-index    : 9;
+    position      : absolute;
+    top           : calc(50% + 30px);
+    left          : calc(50% - 150px);
+    overflow      : hidden;
+    text-overflow : ellipsis;
+    text-align    : center;
+    white-space   : nowrap;
+    max-width     : 300px;
+    min-width     : 300px;
+    width         : 300px;
+    z-index       : 9;
 }
 .viewer-message {
     display         : flex;
@@ -95,11 +98,11 @@ body.dark-theme  #guiviewer3d-toolbar #toolbar-measureTool-done.adsk-button:hove
 
 /*  APS VIEWER CUSTOM TOOLBARS */
 /* ----------------------------------------------------------------------------- */
-#customSelectionToolbar.hide-selectd  #button-toggle-hide-selected  { 
+#customSelectionToolbar.hide-selected  #button-toggle-hide-selected  { 
     background   : var(--color-blue-500) !important; 
     border-color : var(--color-blue-500) !important; 
 }
-#customSelectionToolbar.hide-selectd #button-toggle-hide-selected .icon-remove::before { color : white !important; }
+#customSelectionToolbar.hide-selected #button-toggle-hide-selected .icon-remove::before { color : white !important; }
 #hidden-instances {
     font-family     : 'ArtifaktElement';
     border-radius   : 3px;

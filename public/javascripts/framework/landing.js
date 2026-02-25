@@ -23,6 +23,10 @@ $(document).ready(function() {
         window.open(base);
     }); 
 
+    $('#chrome-download').click(function() {
+        downloadChromeExtensionInstaller();
+    });
+
     $('#theme-selector').change(function() {
 
         $('body').removeClass('dark-theme');
@@ -93,6 +97,11 @@ $(document).ready(function() {
         $('body').removeClass('logs');
         $('.with-log').removeClass('with-log');
         $('.with-troubleshooting').removeClass('with-troubleshooting');
+
+        let url = document.location.href.split('?');
+            url = url[0] + '?app=' + $(this).attr('data-id') + '&theme=' + $('#theme-selector').val();
+
+        window.history.replaceState(null, null, url);
     
     });
 
@@ -112,6 +121,9 @@ $(document).ready(function() {
                 $('.tile').removeClass('with-log');
                 e.preventDefault();
                 e.stopPropagation();
+                let url = document.location.href.split('?');
+                    url = url[0] + '?theme=' + $('#theme-selector').val();
+                window.history.replaceState(null, null, url);
             });
 
         if($(this).children('.troubleshooting').length) {
@@ -185,8 +197,45 @@ $(document).ready(function() {
         $('.close-app').click();
         $('body').toggleClass('logs');
     });
+
+    openSelectedApp()
     
 });
+
+
+function downloadChromeExtensionInstaller() {
+
+    window.showDirectoryPicker().then((fileHandler) => {
+        $.get('/services/chrome-installer', {}, function(response) {
+            for(let file of response.files) saveChromeExtensionInstallerFiles(fileHandler, file);
+        });
+    }).catch((error) => {
+        if (error.name !== "AbortError") console.error("Unexpected error:", error);
+    });
+
+}
+async function saveChromeExtensionInstallerFiles(fileHandler, file) {
+
+    let dirHandler = await createDirectory(fileHandler, '');
+    let fileHandle = await dirHandler.getFileHandle(file.name, { create: true });
+    let writable   = await fileHandle.createWritable();
+
+    if(file.encoding === 'base64') {
+
+        const binary = atob(file.data);   
+        const len    = binary.length;
+        const bytes  = new Uint8Array(len);
+  
+        for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+
+        await writable.write(bytes);
+
+    } else await writable.write(file.data);
+
+    await writable.close();
+
+}
+
 
 function updateLinks() {
 
@@ -221,5 +270,22 @@ function updateLinks() {
     $('.url').each(function() {
         $(this).html(location[0]);
     });
+
+}
+
+
+function openSelectedApp() {
+    
+    let params = new URLSearchParams(window.location.search);
+    let app    = params.get('app');
+
+    if(app) {
+        $('.tile').each(function() {
+            let tileApp = $(this).attr('data-id');
+            if(tileApp === app) {
+                $(this).click();
+            }
+        });
+    }
 
 }
