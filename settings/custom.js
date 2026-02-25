@@ -1,18 +1,45 @@
 // ---------------------------------------------------------------------------------------------------------------------------
 //  INSTRUCTIONS
 // ---------------------------------------------------------------------------------------------------------------------------
-//  This template file should be used to adjust the configuration settings of the UX server
-//  Instead of changing the given settings in settings.js, it is recommended to update then in here.
-//  This default file contains the most frequently changed settings only
-//  Anyway, you can copy/paste any setting to be overwritten from settings.js in here
-//  All settings provided in this custom file will overwrite the matching settings in settings.js
-//  This only works if the exact same structure of the settings is reused
-//  So if exports.config.abom.bomLabel should be changed, you have to define this value as exports.config.abom.bomLabel in here.
-//  This file contains the key configuration elements already (exports.config, exports.menu, exports.chrome)
-//  Do not remove these elements but instead paste the settings to change into these elements
-//  You can find some exmaples of frequently changed settings below as comments
+//  This file contains custom settings that override the defaults in settings.js
+//  Only settings that differ from defaults are included here
 //  Changes to this file only get applied when restarting the server
 // ---------------------------------------------------------------------------------------------------------------------------
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------------
+//  COLOR & VECTOR DEFINITIONS (used throughout this file)
+// ---------------------------------------------------------------------------------------------------------------------------
+let colors = {
+    red     : '#dd2222',
+    yellow  : '#faa21b',
+    green   : '#6a9728',
+    blue    : '#0696d7',
+    list    : ['#CE6565', '#E0AF4B', '#E1E154', '#90D847', '#3BD23B', '#3BC580', '#3BBABA', '#689ED4', '#5178C8', '#9C6BCE', '#D467D4', '#CE5C95']
+}
+let vectors = {
+    red     : [221/255,  34/255, 34/255, 0.8],
+    yellow  : [250/255, 162/255, 27/255, 0.8],
+    green   : [106/255, 151/255, 40/255, 0.8],
+    blue    : [   0.02,    0.58,   0.84, 0.8],
+    gray    : [    0.8,     0.8,    0.8, 0.6],
+    white   : [      1,       1,      1, 0.8],
+    list    : [
+        [206/255, 101/255, 101/255, 0.8],
+        [224/255, 175/255,  75/255, 0.8],
+        [225/255, 225/255,  84/255, 0.8],
+        [144/255, 216/255,  71/255, 0.8],
+        [ 59/255, 210/255,  59/255, 0.8],
+        [ 59/255, 197/255, 128/255, 0.8],
+        [ 59/255, 186/255, 186/255, 0.8],
+        [104/255, 158/255, 212/255, 0.8],
+        [ 81/255, 120/255, 200/255, 0.8],
+        [156/255, 107/255, 206/255, 0.8],
+        [212/255, 103/255, 212/255, 0.8],
+        [206/255,  92/255, 149/255, 0.8]
+    ]
+}
 
 
 
@@ -56,15 +83,28 @@ exports.common = {
 
     workspaces: {
         items : {
-            defaultBOMView : 'Tree Navigator', // This BOM view should contain columns Descriptor, Number (see next setting) and BOM Quantity only
+            defaultBOMView : 'Tree Navigator',
             fieldIdNumber  : 'NUMBER'
         }
     },
 
     viewer : {
-        numberProperties   : ['Part Number', 'Name', 'label', 'Artikelnummer', 'Bauteilnummer'],
-        suffixPrimaryFile  : ['.iam.dwf', '.iam.dwfx', '.ipt.dwf', '.ipt.dwfx'],
-        extensionsIncluded : ['dwf', 'dwfx', 'nwd', 'ipt', 'stp', 'step', 'sldprt', 'pdf'],
+        numberProperties       : ['Part Number', 'Name', 'label', 'Artikelnummer', 'Bauteilnummer'],
+        suffixPrimaryFile      : ['.iam.dwf', '.iam.dwfx', '.ipt.dwf', '.ipt.dwfx'],
+        extensionsIncluded     : ['dwf', 'dwfx', 'nwd', 'iam', 'ipt', 'stp', 'step', 'sldprt', 'pdf'],
+        extensionsExcluded     : [],
+        splitPartNumberBy      : ' v',
+        splitPartNumberIndexes : [0],
+        splitPartNumberSpacer  : '',
+        backgroundColor        : [255, 255, 255, 255, 255, 255],
+        cacheInstances         : true,
+        antiAliasing           : true,
+        ambientShadows         : true,
+        groundReflection       : false,
+        groundShadow           : true,
+        lightPreset            : 4,
+        conversionAttempts     : 10,
+        conversionDelay        : 3000
     }
 
 }
@@ -77,52 +117,950 @@ exports.common = {
 exports.applications = {
 
     abom : {
-        // bomLabel : 'Asset BOM',
-        // assetItems : {
-        //     workspaceId : 282
-        // },
-        // orderProjectDeliveries : {
-        //     workspaceId : 279
-        // },
+        bomLabel      : 'Asset BOM',
+        assetFieldIDs : {
+            ebom          : 'ENGINEERING_BOM',
+            abom          : 'ASSET_BOM',
+            serialNumbers : 'SERIAL_NUMBERS_LIST'
+        },
+        assetItems : {
+            workspaceId   : 282,
+            workspaceName : 'Asset Item',
+            bomViewName   : 'Default View',
+            fieldIDs: {
+                id        : 'ID',
+                asset     : 'ASSET',
+                item      : 'REFERENCE_ITEM',
+                number    : 'REFERENCE_ITEM_NUMBER',
+                root      : 'REFERENCE_ITEM_ROOT',
+                path      : 'REFERENCE_ITEM_PATH',
+                endItem   : 'END_ITEM',
+                sparePart : 'SPARE_PART',
+                purchased : 'PURCHASED',
+                serial    : 'SERIAL',
+                supplier  : 'SUPPLIER',
+            }
+        },
+        items : {
+            bomViewName : 'Asset BOM Editor',
+            fields : {
+                sparePart     : { fieldId : 'SPARE_WEAR_PART', values : ['spare part', 'yes', 'y']      },
+                serialNumber  : { fieldId : 'SERIAL_NUMBER'  , value  : true                            },
+                purchasedPart : { fieldId : 'PDM_CATEGORY'   , values : ['purchased', 'purchased part'] }
+            }
+        },
+        deliveriesWorkspaceId : 279,
+        viewerFeatures : {
+            contextMenu   : false,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : false,
+            markup        : false,
+            hide          : true,
+            ghosting      : true,
+            highlight     : true,
+            single        : true,
+            fitToView     : true,
+            reset         : true,
+            views         : true,
+            selectFile    : true
+        }
     },
-    classes        : {},
-    configurator   : {},
-    dashboard      : {},
-    explorer       : {},
-    impactanalysis : {},
-    insights       : {},
-    instances      : {
-        // tabs : [{
-        //     workspaceId : 308
-        // }]
+
+    classes : {
+        fieldsIncluded : ['DESCRIPTOR', 'WORKSPACE', 'REVISION']
     },
-    mbom           : {
-        // workspaceEBOM : {
-        //     workspaceId : null, // uses common.workspaceIds.items per default
-        // }, 
-        // workspaceMBOM : {
-        //     workspaceId : null, // uses common.workspaceIds.items per default
-        // }
+
+    configurator : {
+        wsIdConfigurationFeatures : '274',
+        bomViewName               : 'Configurator',
+        fieldIdFeatures           : 'FEATURES',
+        fieldIdOptions            : 'OPTIONS',
+        fieldIdInclusions         : 'INCLUSIONS',
+        fieldIdExclusions         : 'EXCLUSIONS',
+        fieldIdBOM                : 'MANUFACTURING_BOM',
+        fieldIdBOMType            : 'CONFIGURATION_TYPE',
+        stateFeatureApproved      : 'Approved',
+        labelSingleOptions        : 'Single Options',
+        valueAlternatives         : 'Alternatives',
+        valueOptional             : 'Optional'
     },
-    portal         : {
-        // downloadPatterns : [{
-        //     fields    : ['NUMBER', 'PDM_ITEM_REVISION'],
-        //     separator : ' ',
-        //     label     : 'Number PDM-Revision'
-        // }]        
+
+    dashboard : [{
+        title       : 'Problem Reporting Dashboard',
+        wsId        : 82,
+        newHeader   : 'Create new Problem Report',
+        newMessage  : 'You encountered an issue? Help us improving our products by submitting a new problem report. This will inform our engineering team automatically.',
+        className   : 'problem-report',
+        contents    : [
+            { type : 'workflow-history', params : { id : 'workflow-history' } },
+            { type : 'details'         , params : { id : 'details', collapseContents : true, editable : true, toggles : true, singleToolbar : 'controls' } },
+            { type : 'markup'          , params : { id : 'markup', fieldIdViewable : 'AFFECTED_ITEM', markupsImageFieldsPrefix : 'IMAGE_' } },
+            { type : 'attachments'     , params : { id : 'attachments', editable : true, headerLabel : 'Files', singleToolbar : 'controls', layout : 'list', tileSize : 'xs' } }
+        ],
+        icon            : 'icon-problem',
+        fieldIdSubtitle : 'DESCRIPTION',
+        progress : [
+            { label : 'New',         color : colors.red,    states : ['Create'] },
+            { label : 'Analysis',    color : colors.yellow, states : ['Review', 'Technical Analysis'] },
+            { label : 'Improvement', color : colors.yellow, states : ['CAPA in progress', 'Change Request in progress'] },
+            { label : 'Completed',   color : colors.green,  states : ['Completed'] }
+        ]
+    },{
+        title       : 'Change Requests Management',
+        wsId        : 83,
+        className   : 'change-request',
+        contents    : [
+            { type : 'details'         , params : { id : 'details', collapseContents : true, editable : true, toggles : true, singleToolbar : 'controls' } },
+            { type : 'attachments'     , params : { id : 'attachments', editable : true, headerLabel : 'Files', singleToolbar : 'controls', layout : 'list', tileSize : 'xs' } },
+            { type : 'managed-items'   , params : { id : 'managed-items', editable : true, columnsIn : [ 'Item', 'Lifecycle', 'Problem Description', 'Proposed Change'], openInPLM : true } },
+            { type : 'workflow-history', params : { id : 'workflow-history' } }
+        ],
+        icon     : 'icon-workflow',
+        progress : [
+            { label : 'Planning',    color : '#000000',     states : ['Create']  },
+            { label : 'Review',      color : colors.red,    states : ['Review & Impact Analysis', 'Peform Tasks', 'Change Control Board Review']  },
+            { label : 'In Work',     color : colors.yellow, states : ['Change Order in progress']   },
+            { label : 'Completed',   color : colors.green,  states : ['Completed'] }
+        ]
+    },{
+        title       : 'Change Orders Dashboard',
+        wsId        : 84,
+        newHeader   : 'Create new Change Order',
+        newMessage  : 'Initiate a new Change Order involving the engineering team by providing the key information below first.',
+        className   : 'change-order',
+        contents    : [
+            { type : 'details'     , params : { id : 'details', collapseContents : true, editable : true, toggles : true, singleToolbar : 'controls', expandSections : ['Summary'] } },
+            { type : 'attachments' , params : { id : 'attachments', editable : true, headerLabel : 'Files', singleToolbar : 'controls', layout : 'list', tileSize : 'xs' } },
+            { type : 'viewer'      , params : { id : 'viewer', fieldIdViewable : 'AFFECTED_ITEM' } },
+            { type : 'project'     , params : { id : 'project', headerLabel : 'Change Tasks', createViewerImageFields : ['IMAGE_1'] , editable : true, openInPLM : true, openOnDblClick : true, multiSelect : false, createWorkspaceIds : ['80'], createHeaderLabel : 'New Task', createToggles : true, createHideSections : true, createContextItemField : 'CHANGE_ORDER', createFieldsIn : ['TITLE', 'DESCRIPTION', 'ASSIGNEE', 'TARGET_COMPLETION_DATE', 'IMAGE_1', 'CHANGE_ORDER'] } },
+        ],
+        icon            : 'icon-markup',
+        fieldIdSubtitle : 'DESCRIPTION',
+        progress : [
+            { label : 'Preparation'    , color : colors.blue  , states : ['Preparation'] },
+            { label : 'Change Action'  , color : colors.yellow, states : ['Perform Change', 'Results Review'] },
+            { label : 'Change Review'  , color : colors.red   , states : ['Change Control Board Review', 'External Review'] },
+            { label : 'Acknowledgement', color : colors.green , states : ['Released'] },
+            { label : 'Completed'      , color : colors.green , states : ['Implemented'] }
+        ]
+    },{
+        title       : 'Change Tasks Dashboard',
+        wsId        : 80,
+        className   : 'change-task',
+        contents    : [
+            { type : 'details'         , params : { id : 'details', expandSections : ['Task Details', 'Follow-Up & Status Updates'], editable : true, toggles : true, singleToolbar : 'controls' } },
+            { type : 'attachments'     , params : { id : 'attachments', editable : true, headerLabel : 'Files', singleToolbar : 'controls', layout : 'row', contentSize : 'l' } },
+            { type : 'grid'            , params : { id : 'grid', editable : true, headerLabel : 'Efforts'} },
+            { type : 'relationships'   , params : { id : 'relationships', headerLabel : 'Deliverables', editable : true, columnsIn : [ 'Item', 'Lifecycle', 'Problem Description', 'Proposed Change'], openInPLM : true } },
+            { type : 'workflow-history', params : { id : 'workflow-history' } }
+        ],
+        icon     : 'icon-mow',
+        progress : [
+            { label : 'Planned',      color : '#000000',     states : ['Planned' ]},
+            { label : 'New',          color : colors.red,    states : ['Assigned']},
+            { label : 'In Work',      color : colors.yellow, states : ['In Work' ]},
+            { label : 'Owner Review', color : colors.green,  states : ['On Hold', 'Review']},
+            { label : 'Done',         color : '#000000',     states : ['Completed']}
+        ]
+    },{
+        title       : 'Non Conformances Tracking Dashboard',
+        wsId        : 98,
+        className   : 'non-conformance',
+        contents    : [
+            { type : 'workflow-history', params : { id : 'workflow-history' } },
+            { type : 'details'         , params : { id : 'details', collapseContents : true, editable : true, toggles : true, singleToolbar : 'controls' } },
+            { type : 'markup'          , params : { id : 'markup', fieldIdViewable : 'NONCONFORMING_ITEM', markupsImageFieldsPrefix : 'IMAGE_' } },
+            { type : 'attachments'     , params : { id : 'attachments', editable : true, headerLabel : 'Files', singleToolbar : 'controls', layout : 'list', tileSize : 'xs' } }
+        ],
+        icon            : 'icon-rules',
+        fieldIdSubtitle : 'DESCRIPTION',
+        progress : [
+            { label : 'New',         color : colors.red,    states : ['Identification In Progress'] },
+            { label : 'Analysis',    color : colors.yellow, states : ['Under Review'] },
+            { label : 'Improvement', color : colors.yellow, states : ['Disposition In Progress', 'CAPA In Progress'] },
+            { label : 'Closed',      color : colors.green,  states : ['Closed'] }
+        ]
+    },{
+        title       : 'Project Tasks Management',
+        wsId        : 90,
+        className   : 'project-task',
+        contents    : [
+            { type : 'workflow-history', className : 'surface-level-1', params : { id : 'workflow-history' } },
+            { type : 'details'         , className : 'surface-level-1', params : { id : 'details', collapseContents : true, editable : true, toggles : true, singleToolbar : 'controls' } },
+            { type : 'grid'            , className : 'surface-level-1', params : { id : 'grid', editable : true, headerLabel : 'Efforts', singleToolbar : 'controls' } },
+            { type : 'relationships'   , className : 'surface-level-1', params : { id : 'relationships', editable : true, headerLabel : 'Deliverables', singleToolbar : 'controls', layout : 'list', tileSize : 'xs' } },
+            { type : 'attachments'     , className : 'surface-level-1', params : { id : 'attachments', editable : true, headerLabel : 'Files', singleToolbar : 'controls', layout : 'list', tileSize : 'xs' } }
+        ],
+        icon : 'icon-layers',
+        progress : [
+            { label : 'Planning',    color : colors.red,    states : ['Planning']  },
+            { label : 'Assigned',    color : colors.red,    states : ['Assigned']  },
+            { label : 'In Work',     color : colors.yellow, states : ['In Work']   },
+            { label : 'Review',      color : colors.green,  states : ['Review']    },
+            { label : 'Completed',   color : colors.green,  states : ['Completed'] }
+        ]
+    },{
+        title       : 'Supplier Collaboration Platform',
+        wsId        : 147,
+        className   : 'supplier-package',
+        contents    : [
+            { type : 'details'    , className : 'surface-level-1', params : { id : 'details', collapseContents : true, editable : true, toggles : true, singleToolbar : 'controls' } },
+            { type : 'attachments', className : 'surface-level-1', params : { id : 'attachments', editable : true, headerLabel : 'Files', singleToolbar : 'controls', layout : 'list', tileSize : 's' } },
+            { type : 'grid'       , className : 'surface-level-1', params : { id : 'grid', editable : true, headerLabel : 'Line Items', singleToolbar : 'controls' } },
+        ],
+        icon : 'icon-workflow',
+        progress : [
+            { label : 'Planning',      color : colors.red,    states : ['Requested']  },
+            { label : 'In Progress',   color : colors.yellow, states : ['In Work', 'Clarification']   },
+            { label : 'Completed',     color : colors.green,  states : ['Completed'] }
+        ]
+    }],
+
+    explorer : {
+        bomViewName          : 'Details',
+        fieldIdPRImage       : 'IMAGE_1',
+        fieldIdPRContext     : 'AFFECTED_ITEM',
+        rollUpFields         : [],
+        wsIdSupplierPackages : 147,
+        kpis : [
+            { id : 'lifecycle', title : 'Item Lifecycle', fieldId : 'LIFECYCLE', type : 'value', style : 'counters', data : [
+                { value : 'Working',     color : colors.list[0], vector : vectors.red    },
+                { value : 'Pre-Release', color : colors.list[2], vector : vectors.yellow },
+                { value : 'Production',  color : colors.list[4], vector : vectors.green  }
+            ]},
+            { id : 'change', title : 'Pending Change', fieldId : 'WORKING_CHANGE_ORDER', type : 'non-empty', style : 'counters', data : [
+                { value : 'Yes', color : colors.list[0], vector : vectors.red },
+                { value : 'No' , color : colors.list[4], vector : vectors.green }
+            ]},
+            { id : 'change-order', title : 'Change Orders', fieldId : 'WORKING_CHANGE_ORDER', type : 'value',  style : 'bars',  data : [] },
+            { id : 'revision', title : 'Revision', fieldId : 'REVISION', type : 'value', style : 'bars', data : [] },
+            { id : 'status', title : 'Status', fieldId : 'STATUS', type : 'value', style : 'counters', data : [
+                { value : 'Superseded', color : colors.list[0], vector : vectors.red    },
+                { value : 'Working'   , color : colors.list[2], vector : vectors.yellow },
+                { value : 'Latest'    , color : colors.list[4], vector : vectors.green  }
+            ]},
+            { id : 'release-date', title : 'Release Date', fieldId : 'RELEASE_DATE', type : 'days', style : 'bars', data : [], sortBy : 'value', sortDirection : 'ascending' },
+            { id : 'type', title : 'Type', fieldId : 'TYPE', type : 'value', style : 'bars', data : [] },
+            { id : 'top-level-class-name', title : 'Top Level Class', fieldId : 'TOP_LEVEL_CLASS', type : 'value', style : 'bars', data : [] },
+            { id : 'class-name', title : 'Class', fieldId : 'CLASS_NAME', type : 'value', style : 'bars', data : [] },
+            { id : 'pdm-category', title : 'PDM Category', fieldId : 'PDM_CATEGORY', type : 'value', style : 'bars', data : [] },
+            { id : 'pdm-location', title : 'PDM Location', fieldId : 'PDM_LOCATION', type : 'value', style : 'bars', data : [] },
+            { id : 'pdm-last-modification-date', title : 'PDM Last Modification', fieldId : 'PDM_LAST_MODIFICATION_DATE', type : 'days', style : 'bars', data : [], sortBy : 'value', sortDirection : 'ascending' },
+            { id : 'responsible-designer', title : 'Responsible Designer', fieldId : 'RESPONSIBLE_DESIGNER', type : 'value', style : 'bars', data : [] },
+            { id : 'spare-part', title : 'Spare Part', fieldId : 'SPARE_WEAR_PART', type : 'value', style : 'counters', data : [
+                { value : '-'        , color : colors.list[0], vector : vectors.red },
+                { value : 'Wear Part', color : colors.list[2], vector : vectors.yellow },
+                { value : 'Spare Part', color : colors.list[4], vector : vectors.green }
+            ]},
+            { id : 'has-pending-packages', title : 'Has Pending Packages', fieldId : 'HAS_PENDING_PACKAGES', type : 'value', style : 'counters', data : [
+                { value : 'Yes', color : colors.list[0], vector : vectors.red },
+                { value : '-'  , color : colors.list[2], vector : vectors.yellow },
+                { value : 'No' , color : colors.list[4], vector : vectors.green }
+            ]},
+            { id : 'make-or-buy', title : 'Make or Buy', fieldId : 'MAKE_OR_BUY', type : 'value', style : 'counters', data : [
+                { value : 'Buy' , color : colors.list[0], vector : vectors.red },
+                { value : '-'   , color : colors.list[2], vector : vectors.yellow },
+                { value : 'Make', color : colors.list[4], vector : vectors.green }
+            ]},
+            { id : 'vendor', title : 'Vendor', fieldId : 'VENDOR', type : 'value', style : 'bars', data : [] },
+            { id : 'country', title : 'Country', fieldId : 'COUNTRY', type : 'value', style : 'bars', data : [] },
+            { id : 'total-cost', title : 'Total Cost', fieldId : 'TOTAL_COST', type : 'value', style : 'bars', data : [] },
+            { id : 'lead-time', title : 'Lead Time', fieldId : 'LEAD_TIME', type : 'value', sortBy : 'value', style : 'bars', data : [] },
+            { id : 'long-lead-time', title : 'Long Lead Time', fieldId : 'LONG_LEAD_TIME', type : 'value', style : 'counters', data : [
+                { value : 'Yes', color : colors.list[0], vector : vectors.red },
+                { value : '-'  , color : colors.list[2], vector : vectors.yellow },
+                { value : 'No' , color : colors.list[4], vector : vectors.green }
+            ]},
+            { id : 'material', title : 'Material', fieldId : 'MATERIAL', type : 'value', style : 'bars', data : [] },
+            { id : 'total-weight', title : 'Total Weight', fieldId : 'TOTAL_WEIGHT', type : 'value', style : 'bars', data : [] },
+            { id : 'quality-inspection-required', title : 'Quality Inspection Required', fieldId : 'INSPECTION_REQUIRED', type : 'value', style : 'counters', data : [
+                { value : 'Yes', color : colors.list[0], vector : vectors.red },
+                { value : '-'  , color : colors.list[2], vector : vectors.yellow },
+                { value : 'No' , color : colors.list[4], vector : vectors.green }
+            ]},
+            { id : 'quality-inspection-result', title : 'Latest Quality Inspection Result', fieldId : 'LATEST_QI_RESULT', type : 'value', style : 'bars', data : [
+                { value : '-'          , color : colors.list[3], vector : vectors.list[0] },
+                { value : 'FAIL'       , color : colors.list[0], vector : vectors.red },
+                { value : 'In Progress', color : colors.list[2], vector : vectors.yellow },
+                { value : 'PASS'       , color : colors.list[4], vector : vectors.green }
+            ]},
+            { id : 'reach', title : 'REACH', fieldId : 'REACH', type : 'value', style : 'bars', data : [
+                { value : 'Not Compliant', color : colors.list[0], vector : vectors.red },
+                { value : 'Unknown'      , color : colors.list[1], vector : vectors.yellow },
+                { value : 'Not Validated', color : colors.list[2], vector : vectors.yellow },
+                { value : 'Not Required' , color : colors.list[3], vector : vectors.list[0] },
+                { value : 'Compliant'    , color : colors.list[4], vector : vectors.green }
+            ]},
+            { id : 'rohs', title : 'RoHS', fieldId : 'ROHS', type : 'value', style : 'bars', data : [
+                { value : 'Not Compliant', color : colors.list[0], vector : vectors.red },
+                { value : 'Unknown'      , color : colors.list[1], vector : vectors.yellow },
+                { value : 'Not Validated', color : colors.list[2], vector : vectors.yellow },
+                { value : 'Not Required' , color : colors.list[3], vector : vectors.list[0] },
+                { value : 'Compliant'    , color : colors.list[4], vector : vectors.green }
+            ]}
+        ],
+        viewerFeatures: {
+            contextMenu   : true,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : true,
+            markup        : true,
+            hide          : true,
+            ghosting      : true,
+            highlight     : true,
+            single        : true,
+            fitToView     : true,
+            reset         : true,
+            views         : true,
+            selectFile    : true
+        }
     },
-    portfolio      : {},
-    projects       : {},
-    reports        : {},
-    reviews        : {},
-    sbom           : {},
-    service        : {},
-    variants       : {
-        // workspaceItemVariants : {
-            // workspaceId : 571,
-        // }
+
+    impactanalysis : {
+        fieldIdStockQuantity              : 'STOCK_QUANTITY',
+        fieldIdNextProductionOrderQantity : 'NEXT_PO_QUANTITY',
+        fieldIdPendingSupplies            : 'PENDING_SUPPLIES',
+        fieldIdProductionOrdersData       : 'PO_DATA',
+        viewerFeatures: {
+            contextMenu   : false,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : true,
+            markup        : false,
+            hide          : true,
+            ghosting      : true,
+            highlight     : true,
+            single        : true,
+            fitToView     : true,
+            reset         : true,
+            views         : true,
+            selectFile    : true
+        }
     },
-    addins : {}
+
+    insights : {
+        hideUserNames       : false,
+        maxLogEntries       : 500000,
+        maxEventLogEntries  : 10000,
+        usersExcluded       : ['Administrator', 'Import User', 'Job User', 'Integration User'],
+        workspacesExcluded  : ['Approval Lists', 'Change Approval Templates', 'Checklist Templates', 'Project Templates']
+    },
+
+    instances : {
+        assets : {
+            workspaceId : 280,
+            fieldIdBOM  : 'ENGINEERING_BOM'
+        },
+        landingHeader  : 'Select From Exsiting Assets',
+        bomViewName    : 'Instance Editor',
+        exportFileName : 'Serial Numbers',
+        tabs : [{
+            label       : 'Serial Numbers',
+            fieldId     : 'SERIAL_NUMBERS_LIST',
+            workspaceId : 275,
+            colorIndex  : 1,
+            bomIcon     : 'icon-tag',
+            fieldsIn    : ['Serial #', 'Installation Date', 'Location', 'Item Title', 'Item Rev', 'Instance #', 'Instance Path'],
+            fieldsList  : {
+                partNumber   : 'NUMBER',
+                path         : 'LOCATION',
+                instanceId   : 'INSTANCE_ID',
+                instancePath : 'INSTANCE_PATH',
+                boundingBox  : 'BOUNDING_BOX'
+            },
+            groupBy   : 'NUMBER',
+            sortOrder : [
+                { sortBy : 'INSTANCE_ID', sortType : 'integer', sortDirection : 'ascending' },
+                { sortBy : 'LOCATION'   , sortType : 'string' , sortDirection : 'ascending' }
+            ],
+            filter : {
+                fieldId : 'SERIAL_NUMBER',
+                value   : true
+            }
+        }],
+        viewerFeatures : {
+            contextMenu   : false,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : true,
+            markup        : true,
+            hide          : true,
+            ghosting      : true,
+            highlight     : true,
+            single        : true,
+            fitToView     : false,
+            reset         : true,
+            views         : true,
+            selectFile    : false
+        }
+    },
+
+    mbom : {
+        wsIdEBOM                      : '57',
+        wsIdMBOM                      : '57',
+        bomViewNameEBOM               : 'MBOM Transition',
+        bomViewNameMBOM               : 'MBOM Transition',
+        fieldIdEBOM                   : 'EBOM',
+        fieldIdMBOM                   : 'MBOM',
+        fieldIdNumber                 : 'NUMBER',
+        fieldIdTitle                  : 'TITLE',
+        fieldIdCategory               : 'PDM_CATEGORY',
+        fieldIdProcessCode            : 'PROCESS_CODE',
+        fieldIdEndItem                : 'END_ITEM',
+        fieldIdMatchesMBOM            : 'MATCHES_MBOM',
+        fieldIdIgnoreInMBOM           : 'IGNORE_IN_MBOM',
+        fieldIdIsProcess              : 'IS_PROCESS',
+        fieldIdLastSync               : 'LAST_MBOM_SYNC',
+        fieldIdLastUser               : 'LAST_MBOM_USER',
+        fieldIdEBOMItem               : 'IS_EBOM_ITEM',
+        fieldIdEBOMRootItem           : 'EBOM_ROOT_ITEM',
+        fieldsToCopy                  : ['TITLE', 'DESCRIPTION'],
+        fieldIdInstructions           : 'INSTRUCTIONS',
+        fieldIdMarkupSVG              : 'MARKUP_SVG',
+        fieldIdMarkupState            : 'MARKUP_STATE',
+        revisionBias                  : 'working',
+        pinMBOMItems                  : false,
+        suffixItemNumber              : '-M',
+        incrementOperatonsItemNumber  : true,
+        newDefaults                   : [],
+        searches : [
+            { title : 'Purchased Parts', query : 'ITEM_DETAILS:MAKE_OR_BUY%3DBuy' },
+            { title : 'Packaging Parts', query : 'ITEM_DETAILS:TYPE%3DPackaging'  },
+            { title : 'Processes'      , query : 'ITEM_DETAILS:TYPE%3DProcess'    }
+        ],
+        sectionInCreateForm : ['Basic', 'Technical Details'],
+        viewerFeatures : {
+            contextMenu   : false,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : true,
+            markup        : true,
+            hide          : true,
+            ghosting      : true,
+            highlight     : false,
+            single        : true,
+            fitToView     : true,
+            reset         : true,
+            views         : true,
+            selectFile    : true
+        }
+    },
+
+    portal : {
+        autoClick        : true,
+        openMostRecent   : true,
+        searchInputText  : 'Enter part number',
+        searchTileImages : true,
+        workspacesIn     : ['Items'],
+        bomViewName      : 'Basic',
+        bomLevels        : 10,
+        expandSections   : ['Basic'],
+        sectionsExcluded : ['AML Summary', 'Quality Inspection', 'Sustainability', 'Compliance', 'Others'],
+        sectionsIncluded : [],
+        sectionsOrder    : ['Basic', 'Technical Details', 'PDM Data'],
+        fieldsExcluded   : ['CLASS_DATA', 'ESTIMATED_COST', 'PENDING_PACKAGES'],
+        fieldsIncluded   : [],
+        viewingFormats   : ['dwf', 'dwfx'],
+        suppressLinks    : false,
+        viewerFeatures   : {
+            contextMenu   : false,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : true,
+            markup        : false,
+            hide          : true,
+            ghosting      : true,
+            highlight     : true,
+            single        : true,
+            fitToView     : true,
+            reset         : true,
+            views         : true,
+            selectFile    : true
+        }
+    },
+
+    portfolio : {
+        bomViewName    : 'Basic',
+        hierarchy      : ['Product Categories', 'Product Lines', 'Products'],
+        viewerFeatures : {
+            contextMenu   : false,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : true,
+            markup        : false,
+            hide          : true,
+            ghosting      : true,
+            highlight     : true,
+            single        : true,
+            fitToView     : true,
+            reset         : true,
+            views         : true,
+            selectFile    : true
+        }
+    },
+
+    projects : {
+        wsIdProjects : 86,
+        query        : '*'
+    },
+
+    reports : {
+        startupReportNames : ['Audits by Workflow State', 'CR approval status', 'DRT: Due Dates', 'Project Planned Effort', 'PR: Problem Report Sources', 'PR: Priority of PRs in progress', 'EX: Change Requests'],
+        startupReportCount : 5
+    },
+
+    reviews : {
+        fieldIdItem   : 'ITEM',
+        fieldIdImage  : 'IMAGE',
+        fieldIdMarkup : 'MARKUP',
+        transitionId  : 'CLOSE_REVIEW',
+        bomViewName   : 'Basic',
+        bomDepth      : 3,
+        viewerFeatures : {
+            contextMenu   : false,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : true,
+            markup        : true,
+            hide          : true,
+            ghosting      : true,
+            highlight     : true,
+            single        : true,
+            fitToView     : true,
+            reset         : true,
+            views         : true,
+            selectFile    : true
+        },
+        workspaces : {
+            reviews : {
+                id       : 76,
+                sections : [ { name : 'Review Findings' } ],
+                states   : [ 'Planning', 'Preparation', 'In Progress' ]
+            },
+            tasks : {
+                id       : 77,
+                sections : [ { name : 'Definition' }, { name : 'Schedule' } ],
+                states   : [ 'Assigned', 'On Hold', 'In Work', 'Review', 'Complete' ]
+            }
+        }
+    },
+
+    sbom : {
+        appTitle  : 'Service BOM Editor',
+        sourceBOM : {
+            fieldId     : 'ENGINEERING_BOM',
+            bomViewName : 'Service',
+            headerLabel : 'Engineering BOM'
+        },
+        targetBOM : {
+            fieldId       : 'SERVICE_BOM',
+            bomViewName   : 'Service',
+            itemTypeValue : 'Service BOM',
+            prefixTitle   : 'Service BOM of ',
+            filterLabelIn : 'Show Items contained in Service BOM only',
+            filterLabelEx : 'Hide Items contained in Service BOM',
+            defaults : {
+                number      : { copyFrom : 'bom.NUMBER'     , prefix : ''                , suffix : '-SBOM' },
+                title       : { copyFrom : 'ctx.TITLE'      , prefix : 'Service BOM of ' , suffix : ''      },
+                description : { copyFrom : 'bom.DESCRIPTION', prefix : ''                , suffix : ''      },
+            }
+        },
+        itemsFieldIds : {
+            number      : 'NUMBER',
+            title       : 'TITLE',
+            description : 'DESCRIPTION',
+            type        : 'TYPE'
+        },
+        picklistIdItemType : 'CUSTOM_LOOKUP_ITEM_TYPES',
+        itemHighlight : {
+            fieldId        : 'SPARE_WEAR_PART',
+            fieldValues    : ['spare', 'spare part', 'yes', 'x', 'y', 'true'],
+            bomColumnTitle : 'Spare/Wear',
+            filterLabelIn  : 'Show Recommended Spare Parts Only',
+            filterLabelEx  : 'Hide Recommended Spare Parts'
+        },
+        bomTypes : [{
+            mode          : 'list',
+            tabLabel      : 'Spare Parts',
+            buttonLabels  : ['Add all recommended'],
+            bomItemTypes  : ['Spare Parts List'],
+            icon          : 'icon-details',
+            color         : colors.red,
+            filterLabelIn : 'Show Spare Parts List Items Only',
+            filterLabelEx : 'Hide Spare Parts List Items',
+            basePosNumber : 101,
+            hideQuantity  : true
+        },{
+            mode          : '1-level-bom',
+            tabLabel      : 'Maintenance Kits',
+            buttonLabels  : ['New Kit'],
+            bomItemTypes  : ['Service Kit'],
+            icon          : 'icon-product',
+            color         : colors.green,
+            filterLabelIn : 'Show Maintenance Kit Items Only',
+            filterLabelEx : 'Hide Maintenance Items',
+            basePosNumber : 201
+        },{
+            mode          : '2-levels-bom',
+            tabLabel      : 'Services',
+            buttonLabels  : ['New Service', 'New Operation'],
+            bomItemTypes  : ['Service Offering', 'Service Operation'],
+            icon          : 'icon-service',
+            color         : colors.yellow,
+            filterLabelIn : 'Show Services Items Only',
+            filterLabelEx : 'Hide Services Items',
+            basePosNumber : 301
+        }],
+        enableBOMPin : false,
+        viewerFeatures : {
+            contextMenu   : false,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : true,
+            markup        : false,
+            hide          : true,
+            ghosting      : true,
+            highlight     : true,
+            single        : true,
+            fitToView     : true,
+            reset         : true,
+            views         : true,
+            selectFile    : false
+        }
+    },
+
+    service : {
+        labels : {
+            homeSparePartRequests : 'Spare Part Requests',
+            homeProblemReports    : 'Problem Reports'
+        },
+        products : {
+            workspaceId  : 95,
+            headerLabel  : 'Serviceable Products',
+            icon         : 'icon-product',
+            groupBy      : 'PRODUCT_LINE',
+            contentSize  : 'l',
+            tileImage    : 'IMAGE',
+            tileTitle    : 'TITLE',
+            tileSubtitle : 'DESCRIPTION',
+            filter       : [{
+                field      : 'ENGINEERING_BOM',
+                type       : 0,
+                comparator : 21,
+                value      : ''
+            }],
+            fieldIDs : {
+                ebom : 'ENGINEERING_BOM',
+                sbom : 'SERVICE_BOM'
+            }
+        },
+        items : {
+            bomViewName          : 'Service',
+            bomRevisionBias      : 'release',
+            fieldIdSparePart     : 'SPARE_WEAR_PART',
+            fieldValuesSparePart : ['spare part', 'yes', 'x', 'y', 'wear part'],
+            endItemFilter        : { fieldId : 'SBOM_END_ITEM', value : true },
+            sparePartTileDetails : ['MATERIAL', 'ITEM_WEIGHT', 'DIMENSIONS']
+        },
+        sparePartsRequests : {
+            workspaceId         : 241,
+            sectionsExpanded    : [ 'Requestor Contact Details', 'Request Details' ],
+            sectionsExcluded    : [ 'Planning & Tracking', 'Request Confirmation', 'Quote Submission & Response', 'Real Time KPIs', 'Workflow Activity', 'Quote Summary', 'Order Processing', 'Related Processes' ],
+            gridColumnsExcluded : [ 'Line Item Cost', 'Availability [%]', 'Manufacturer', 'Manufacturer P/N', 'Unit Cost', 'Total Cost', 'Make or Buy', 'Lead Time (w)', 'Long Lead Time'],
+            stateColors         : [
+                { color : '#faa21b', states : ['Received']                            , label : 'New'      },
+                { color : '#dd2222', states : ['Awaiting Response', 'Quote Submitted'], label : 'TODO'     },
+                { color : '#faa21b', states : ['Order in process', 'Shipment']        , label : 'Shipment' },
+                { color : '#6a9728', state  : 'Completed'                             , label : 'Complete' }
+            ],
+        },
+        problemReports : {
+            workspaceId  : 82,
+            fieldIdImage : 'IMAGE_1',
+            stateColors  : [
+                { color : '#222222', state  : 'Create'                                           , label : 'New'     },
+                { color : '#faa21b', states : ['Review','Technical Analysis']                    , label : 'Review'  },
+                { color : '#6a9728', state  : 'Completed'                                        , label : 'Complete'},
+                { color : '#dd2222', states : ['Change Request in progress', 'CAPA in prorgress'], label : 'In Work' }
+            ]
+        },
+        serviceBOMTypes : {
+            sparePart : {
+                fieldValue : 'Spare Parts List',
+                groupLabel : 'Spare Parts',
+                icon       : 'icon-package'
+            },
+            kit : {
+                fieldValue : 'Service Kit',
+                groupLabel : 'Kits',
+                icon       : 'icon-list'
+            },
+            offering : {
+                fieldValue : 'Service Offering',
+                groupLabel : 'Service Offerings',
+                icon       : 'icon-layers'
+            },
+            custom : {
+                icon : 'icon-settings'
+            }
+        },
+        assetServices : {
+            workspaceId     : 284,
+            headerLabel     : 'Pending Asset Services',
+            icon            : 'icon-product',
+            fieldIDAssignee : 'ASSIGNEE',
+            hideStates      : ['Completed', 'Cancelled'],
+            fieldIDs        : {
+                asset     : 'ASSET',
+                assignee  : 'ASSIGNEE',
+                serialnrs : 'SERIAL_NUMBERS_LIST'
+            },
+            detailsPanel : {
+                headerLabel     : 'Asset Service Ticket',
+                expandSections  : ['Asset Details'],
+                excludeSections : ['Images'],
+                layout          : 'narrow',
+            }
+        },
+        projects : {
+            workspaceId  : 283,
+            headerLabel  : 'Projects / Facilities',
+            hideStates   : ['Archived', 'Decomissioned'],
+            tileSubtitle : 'CUSTOMER',
+            tileDetails  : [{
+                icon    : 'icon-flag',
+                fieldId : 'COUNTRY',
+                prefix  : 'Country'
+            }, {
+                icon    : 'icon-city',
+                fieldId : 'CITY',
+                prefix  : 'City'
+            }],
+        },
+        assets : {
+            workspaceId  : 280,
+            icon         : 'icon-product',
+            tableColumns : ['ASSET_SN', 'ASSET_GROUP', 'ASSET_TYPE', 'ASSET_SYSTEM', 'ASSET_FUNCTION'],
+            fieldIDs     : {
+                project   : 'PROJECT',
+                ebom      : 'ENGINEERING_BOM',
+                sbom      : 'SERVICE_BOM',
+                serialnrs : 'SERIAL_NUMBERS_LIST'
+            }
+        },
+        serialNumbers : {
+            tableColumns : ['ID', 'STATUS', 'SERIAL', 'ITEM_NUMBER', 'NUMBER', 'ITEM_REV', 'LOCATION', 'SUPPLIER', 'PREVIOUS_SERIAL', 'INSTANCE_ID', 'INSTANCE_PATH'],
+            fieldIDs : {
+                partNumber   : 'NUMBER',
+                path         : 'LOCATION',
+                instanceId   : 'INSTANCE_ID',
+                instancePath : 'INSTANCE_PATH'
+            },
+        },
+        paramsItemDetails : {
+            id               : 'details-top',
+            headerLabel      : 'descriptor',
+            layout           : 'narrow',
+            collapseContents : true,
+            useCache         : true,
+            fieldsEx         : ['ACTIONS'],
+            sectionsEx       : ['Sourcing Summary','Others']
+        },
+        paramsItemAttachments : {
+            extensionsEx : ['.dwf','.dwfx'],
+            headerLabel  : 'Files',
+            layout       : 'list',
+            filterByType : true,
+            contentSize  : 'xs'
+        },
+        paramsDocumentation : {
+            extensionsEx : ['.dwf','.dwfx'],
+            layout       : 'list',
+            size         : 'm'
+        },
+        applicationFeatures : {
+            homeButton              : true,
+            itemDetails             : true,
+            itemAttachments         : true,
+            contextDocumentation    : true,
+            manageSparePartRequests : true,
+            manageProblemReports    : true,
+            showStock               : true,
+            requestWorkflowActions  : true,
+            problemWorkflowActions  : true,
+            enableCustomRequests    : true,
+            openInPLM               : true
+        },
+        viewerFeatures : {
+            contextMenu   : false,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : true,
+            markup        : true,
+            hide          : true,
+            ghosting      : true,
+            highlight     : true,
+            single        : true,
+            fitToView     : true,
+            reset         : true,
+            views         : true,
+            selectFile    : true
+        }
+    },
+
+    variants : {
+        workspaceItems : {
+            bomViewName : 'Basic'
+        },
+        workspaceItemVariants : {
+            workspaceId           : 571,
+            sectionLabel          : 'Variant Definition',
+            fieldIds              : {
+                baseItem  : 'BASE_ITEM',
+                title     : 'TITLE',
+                rootDMSId : 'BASE_ROOT_DMS_ID',
+            },
+            bomFieldIdBaseBOMPath : 'BASE_BOM_PATH',
+            bomViewName           : 'Variant Manager'
+        },
+        newItemVariantsTitle : {
+            fieldsToConcatenate : ['COLOUR', 'MATERIAL'],
+            separator           : ' / '
+        },
+        maxBOMLevels   : 4,
+        viewerFeatures : {
+            contextMenu   : false,
+            cube          : false,
+            orbit         : false,
+            firstPerson   : false,
+            camera        : false,
+            measure       : true,
+            section       : true,
+            explodedView  : true,
+            modelBrowser  : false,
+            properties    : false,
+            settings      : false,
+            fullscreen    : true,
+            markup        : false,
+            hide          : true,
+            ghosting      : true,
+            highlight     : true,
+            single        : true,
+            fitToView     : true,
+            reset         : true,
+            views         : true,
+            selectFile    : true
+        }
+    },
+
+    addins : {
+
+        item : {
+            expandSections : [ 'Basic', 'Technical Details' ],
+            sectionsEx     : [ 'Others' ],
+            fieldsEx       : [ 'ACTIONS' ]
+        },
+
+        projects : {
+            workspaceId                  : 213,
+            stateCompleted               : 'Completed',
+            headerLabelProjects          : 'Engineering Projects',
+            fieldIdBOM                   : 'DELIVERABLE_4',
+            tabNameBOM                   : 'BOM',
+            tabNameDetails               : 'Details',
+            projectDetailsSectionsEx     : [ 'Project Schedule', 'Closure' ],
+            projectDetailsExpandSections : [ 'Task Details', 'Header', 'Details' ]
+        },
+
+        tasks : {
+            headerLabelTasks   : 'My Work List',
+            columnsExTasks     : [ 'State Set On', 'State Set By', 'State' ],
+            workspacesInTasks  : [ 'Change Tasks', 'Change Requests', 'Change Orders', 'Problem Reports' ],
+            expandSectionsTask : [ 'Task Details', 'Header', 'Details' ]
+        }
+
+    }
 
 }
 
@@ -131,8 +1069,116 @@ exports.applications = {
 // ---------------------------------------------------------------------------------------------------------------------------
 //  CUSTOM MAIN MENU SETTINGS
 // ---------------------------------------------------------------------------------------------------------------------------
-exports.menu = []
-
+exports.menu = [
+    [{
+        label : 'Business Applications',
+        commands : [{
+            icon     : 'icon-3d',
+            title    : 'Portal',
+            subtitle : 'Quick access to all product data',
+            url      : '/portal'
+        },{
+            icon     : 'icon-tiles',
+            title    : 'Product Portfolio Catalog',
+            subtitle : 'Browse your current product portfolio',
+            url      : '/portfolio'
+        },{
+            icon     : 'icon-book',
+            title    : 'Class Browser',
+            subtitle : 'Use classification for your data research',
+            url      : '/classes'
+        },{
+            icon     : 'icon-trend-chart',
+            title    : 'Product Data Explorer',
+            subtitle : 'Track design maturity using defined KPIs',
+            url      : '/explorer'
+        },{
+            icon     : 'icon-columns',
+            title    : 'Workspace Navigator',
+            subtitle : 'Manage your master data easily',
+            url      : '/navigator'
+        },{
+            icon     : 'icon-service',
+            title    : 'Service Portal',
+            subtitle : 'Real time spare parts information',
+            url      : '/service'
+        }]
+    }],[{
+        label : 'Dashboards',
+        commands : [{
+            icon     : 'icon-important',
+            title    : 'Problem Reporting Dashboard',
+            subtitle : 'Capture and resolve problem reports',
+            url      : '/dashboard?wsId=82'
+        },{
+            icon     : 'icon-released',
+            title    : 'Non Conformances Dashboard',
+            subtitle : 'Capture and resolve quality issues',
+            url      : '/dashboard?wsId=98'
+        },{
+            icon     : 'icon-workflow',
+            title    : 'Change Requests Dashboard',
+            subtitle : 'Create and manage Change Requests',
+            url      : '/dashboard?wsId=83'
+        },{
+            icon     : 'icon-markup',
+            title    : 'Change Orders Dashboard',
+            subtitle : 'Create and manage Change Orders & Tasks',
+            url      : '/dashboard?wsId=84'
+        },{
+            icon     : 'icon-mow',
+            title    : 'Change Tasks Dashboard',
+            subtitle : 'Review, perform and complete assigned tasks',
+            url      : '/dashboard?wsId=80'
+        },{
+            icon     : 'icon-dashboard',
+            title    : 'Reports Dashboard',
+            subtitle : 'Gain insights using your PLM reports',
+            url      : '/reports'
+        },{
+            icon     : 'icon-timeline',
+            title    : 'Projects Dashboard',
+            subtitle : 'Review timeline of NPI projects in progress',
+            url      : '/projects'
+        }]
+    }],[{
+        label : 'Administration Utilities',
+        commands : [{
+            icon     : 'icon-status',
+            title    : 'Data Manager',
+            subtitle : 'Automate data processing tasks',
+            url      : '/data'
+        },{
+            icon     : 'icon-rules',
+            title    : 'Workspace Comparison',
+            subtitle : 'Deploy changes securely with automated comparison',
+            url      : '/workspace-comparison'
+        },{
+            icon     : 'icon-bar-chart-stack',
+            title    : 'Tenant Insights',
+            subtitle : 'Track user activity and data creation in your tenant',
+            url      : '/insights'
+        },{
+            icon     : 'icon-stopwatch',
+            title    : 'Administration Shortcuts',
+            subtitle : 'Provides quick access to frequently used admin panels',
+            url      : '/shortcuts'
+        }]
+    },{
+        label : 'Advanced Administration Utilities',
+        commands : [{
+            icon     : 'icon-problem',
+            title    : 'Outstanding Work Report',
+            subtitle : 'Review &amp update Outstanding Work lists of users',
+            url      : '/outstanding-work'
+        },{
+            icon     : 'icon-group',
+            title    : 'User Settings Manager',
+            subtitle : 'Configure standards for new and existing users',
+            url      : '/users'
+        }]
+    }]
+]
 
 
 
@@ -140,15 +1186,124 @@ exports.menu = []
 //  SERVER ROUTING
 // ---------------------------------------------------------------------------------------------------------------------------
 exports.server = {
-    landingPage     : '',  // Set the default URL to be opened if no app URL is provided (default is '')
-    servicesEnabled : {}   // Defines the applications to enable. When an application is set to false, an error 404 page will be shown when users try accessing the given page.
+    landingPage     : '',
+    servicesEnabled : {}
 }
 
 
 
 // ---------------------------------------------------------------------------------------------------------------------------
-//  CUSTOM CHOROME EXTENSION SETTINGS
+//  CUSTOM CHROME EXTENSION SETTINGS
 // ---------------------------------------------------------------------------------------------------------------------------
 exports.chrome = {
+    commands : [{
+        id    : 'users',
+        url   : '/users',
+        label : 'User Settings Manager',
+        icon  : 'zmdi-accounts-list',
+        order : 101
+    },{
+        id    : 'data',
+        url   : '/data',
+        label : 'Data Manager',
+        icon  : 'zmdi-storage',
+        order : 102
+    },{
+        id    : 'workspace-comparison',
+        url   : '/workspace-comparison',
+        label : 'Workspace Comparison',
+        icon  : 'zmdi-blur-linear',
+        order : 103
+    },{
+        id    : 'insights',
+        url   : '/insights',
+        label : 'Tenant Insights',
+        icon  : 'zmdi-graphic-eq',
+        order : 104
+    },{
+        id    : 'outstanding-work',
+        url   : '/outstanding-work',
+        label : 'Outstanding Work Report',
+        icon  : 'zmdi-assignment-account',
+        order : 105
+    }],
+    buttons : [{
+        id         : 'mbom',
+        url        : '/mbom?',
+        label      : 'MBOM Editor',
+        workspaces : ['items']
+    },{
+        id         : 'sbom',
+        url        : '/sbom?',
+        label      : 'Service BOM Editor',
+        workspaces : ['products']
+    },{
+        id         : 'cia',
+        url        : '/impactanalysis?',
+        label      : 'Change Impact Analysis',
+        workspaces : ['pr', 'cr', 'co']
+    },{
+        id         : 'items-variants',
+        url        : '/variants?',
+        label      : 'Variants Manager',
+        workspaces : ['items']
+    },{
+        id         : 'pde',
+        url        : '/explorer?',
+        label      : 'Product Data Explorer',
+        icon       : 'zmdi-chart',
+        workspaces : ['items']
+    },{
+        id         : 'insights-asset',
+        url        : '/explorer?options=fieldIdEBOM:EBOM&',
+        label      : 'Insights',
+        icon       : 'zmdi-chart',
+        workspaces : ['assets']
+    },{
+        id         : 'mbom',
+        url        : '/mbom?',
+        label      : 'Edit MBOM',
+        workspaces : ['items']
+    },{
+        id         : 'product-variants',
+        url        : '/variants?options=fieldIdEBOM:ENGINEERING_BOM&',
+        label      : 'Manage Variants',
+        workspaces : ['products']
+    },{
+        id         : 'instances',
+        url        : '/instances?',
+        label      : 'Instance Editor',
+        workspaces : ['assets']
+    },{
+        id         : 'abom',
+        url        : '/abom?',
+        label      : 'Edit Asset BOM',
+        workspaces : ['assets']
+    },{
+        id         : 'sbom',
+        url        : '/sbom?',
+        label      : 'Edit Service BOM',
+        workspaces : ['products', 'assets']
+    },{
+        id         : 'class-browser',
+        url        : '/classes?',
+        label      : 'Browse Class',
+        icon       : 'zmdi-labels',
+        workspaces : ['items']
+    },{
+        id         : 'service-portal',
+        url        : '/service?',
+        label      : 'Service Portal',
+        icon       : 'zmdi-wrench',
+        workspaces : ['items']
+    }],
+    workspaces : {
+        items    : 57,
+        pr       : 82,
+        cr       : 83,
+        co       : 84,
+        products : 95,
+        assets   : 280
+    },
     customStyle : true
 }

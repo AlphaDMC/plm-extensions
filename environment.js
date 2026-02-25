@@ -14,11 +14,11 @@
 //  me merged with your custom settings before. This enables administrators to copy individual settings to be changed
 //  from settings.js to custom.js. When updates to settings.js will be provided, the custom settings will still remain
 // ---------------------------------------------------------------------------------------------------------------------------
-exports.tenant       = '';
-exports.clientId     = '';
-exports.redirectUri  = 'http://localhost:8080/callback';
-exports.defaultTheme = 'dark';
-exports.enableCache  = true;    
+exports.tenant       = 'blox';
+exports.clientId     = '4Q2LXekPOjaOKKaafGju6LSznzlhmY9YZczWyYLygGz7QEB8';
+exports.redirectUri  = 'https://plm-extensions-164478011399.us-east1.run.app/callback';
+exports.defaultTheme = 'light';
+exports.enableCache  = false;
 exports.debugMode    = false;         // Enables printout of view configuration settings to console for debugging purposes (ie when using insertBOM, insertDetails, ...)
 exports.settings     = 'custom.js';   // This file must be stored in folder /settings
 
@@ -32,8 +32,8 @@ exports.settings     = 'custom.js';   // This file must be stored in folder /set
 //  However, as this impacts security, its is recommended to provide the following settings only if these advanced admin utilities will be used, maybe even only temporarily or in a local copy of this server.
 //  All other applications will work even if the following 2 settings are not provided as they use the clientId variable instead. 
 //  Note that you can also provide these settings using the given environment variables ADMIN_CLIENT_ID and ADMIN_CLIENT_SECRET.
-exports.adminClientId     = '';
-exports.adminClientSecret = '';
+exports.adminClientId     = 'egOUtmpMIUGFlQVrB1QcGAGYVXi1UUUIwb5yYbVy7jjGk1AH';
+exports.adminClientSecret = '4nsSWFqVNgB5TcfJVL9HvCW64k2af4UzOr7NAw9Kq3KZggrGAcRSY1FX6bPEevM4';
 
 
 // ---------------------------------------------------------------------------------------------------------------------------
